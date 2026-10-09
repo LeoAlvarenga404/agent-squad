@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+squad.toml
+__pycache__/
+*.pyc
+.venv/
+.cache/
+.pytest_cache/
+logs/
+workspace/
+*.parquet
+sim/RESULTS*.md
+evals/memory/RESULTS.md
