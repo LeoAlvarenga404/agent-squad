@@ -1,0 +1,28 @@
+{
+  "model": "claude-haiku-5-5",
+  "enabledMcpjsonServers": [
+    "crm"
+  ],
+  "permissions": {
+    "defaultMode": "default",
+    "allow": [
+      "mcp__crm__dashboard",
+      "mcp__crm__all_directives",
+      "mcp__crm__list_deals",
+      "mcp__crm__get_deal",
+      "mcp__crm__list_campaigns",
+      "Bash(hermes -p hunter chat -Q:*)"
+    ],
+    "deny": [
+      "Bash(squad:*)",
+      "Bash(uv run:*)",
+      "Bash(uvx:*)",
+      "Bash(python:*)",
+      "Edit",
+      "Write",
+      "Bash(git:*)",
+      "Bash(vercel:*)",
+      "Read(**/.env*)"
+    ]
+  }
+}

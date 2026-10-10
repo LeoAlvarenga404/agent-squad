@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "crm": {
+      "command": "uv",
+      "args": ["run", "--project", "../..", "squad", "mcp"],
+      "env": { "SQUAD_ROLE": "coordinator" }
+    }
+  }
+}
