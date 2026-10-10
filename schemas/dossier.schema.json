@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lead dossier",
+  "description": "What the hunter learned about one local business: enough to decide whether to approach it and to build its site with real data. Unknown scalars are null; lists are never null (nothing found = []).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["slug", "collected_on", "identity", "location", "contact", "presence", "proof", "offer", "signals",
+    "competition", "verdict"],
+  "$defs": {
+    "text": {"type": ["string", "null"]},
+    "nonempty": {"type": "string", "minLength": 1},
+    "strings": {"type": "array", "items": {"type": "string"}}
+  },
+  "properties": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "collected_on": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "niche"],
+      "properties": {
+        "name": {"$ref": "#/$defs/nonempty"},
+        "niche": {"$ref": "#/$defs/nonempty"},
+        "subniche": {"$ref": "#/$defs/text"},
+        "tax_id": {"$ref": "#/$defs/text", "description": "Company registration number (CNPJ in Brazil)"}
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["city"],
+      "properties": {
+        "city": {"$ref": "#/$defs/nonempty"},
+        "state": {"$ref": "#/$defs/text"},
+        "neighborhood": {"$ref": "#/$defs/text"},
+        "address": {"$ref": "#/$defs/text"}
+      }
+    },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "whatsapp": {"$ref": "#/$defs/text", "description": "With country code, e.g. +5513991234567"},
+        "phone": {"$ref": "#/$defs/text"},
+        "email": {"$ref": "#/$defs/text"},
+        "instagram": {"$ref": "#/$defs/text"},
+        "google_business": {"$ref": "#/$defs/text"}
+      }
+    },
+    "presence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["has_site"],
+      "properties": {
+        "has_site": {"type": "boolean"},
+        "url": {"$ref": "#/$defs/text"},
+        "stack": {"$ref": "#/$defs/text"},
+        "mobile_ok": {"type": ["boolean", "null"]},
+        "https": {"type": ["boolean", "null"]},
+        "last_update_seen": {"$ref": "#/$defs/text"},
+        "has": {"$ref": "#/$defs/strings"},
+        "missing": {"$ref": "#/$defs/strings"}
+      }
+    },
+    "proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rating": {"type": ["number", "null"], "minimum": 0, "maximum": 5},
+        "review_count": {"type": ["integer", "null"], "minimum": 0},
+        "reviews": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text"],
+            "properties": {
+              "text": {"$ref": "#/$defs/nonempty", "description": "Verbatim, never summarized or translated"},
+              "author": {"$ref": "#/$defs/text"},
+              "rating": {"type": ["number", "null"]},
+              "date": {"$ref": "#/$defs/text"},
+              "source": {"$ref": "#/$defs/text"}
+            }
+          }
+        },
+        "photos": {"$ref": "#/$defs/strings", "description": "Photo URLs"}
+      }
+    },
+    "offer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "services": {"$ref": "#/$defs/strings"},
+        "hours": {"$ref": "#/$defs/text"},
+        "price_range": {"$ref": "#/$defs/text"}
+      }
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["signal", "weight"],
+        "properties": {
+          "signal": {"$ref": "#/$defs/nonempty"},
+          "weight": {"enum": ["high", "medium", "low"]}
+        }
+      }
+    },
+    "competition": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": {"$ref": "#/$defs/nonempty"},
+          "rating": {"type": ["number", "null"]},
+          "has_site": {"type": ["boolean", "null"]}
+        }
+      }
+    },
+    "verdict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "reason", "hook"],
+      "properties": {
+        "score": {"type": "integer", "minimum": 0, "maximum": 10},
+        "reason": {"$ref": "#/$defs/nonempty"},
+        "hook": {"$ref": "#/$defs/nonempty"}
+      }
+    }
+  }
+}
