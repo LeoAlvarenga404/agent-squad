@@ -1,0 +1,3 @@
+# Reviewer (Codex): read-only. Check these keys against your Codex CLI version before relying on them.
+sandbox_mode = "read-only"
+approval_policy = "never"
