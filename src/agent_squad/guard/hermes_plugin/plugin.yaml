@@ -1,0 +1,5 @@
+name: squad-guard
+version: 0.1.0
+description: "Deterministic prompt-manipulation guard: input alert, per-sender scope on CRM tools, notice on third-party content and leak filter on output."
+author: "agent-squad contributors"
+kind: standalone
