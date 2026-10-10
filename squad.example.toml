@@ -1,0 +1,75 @@
+# Copy to squad.toml (git-ignored). Everything here has a default; set what is yours.
+
+[business]
+name = "Acme Studio"            # how agents introduce the business
+owner = "Alex"                  # the human who approves; also feeds the impersonation rules of the guard
+language = "pt-BR"              # language the agents use with customers
+country_code = "55"             # phone matching: country prefix stripped before comparing
+area_code_digits = 2            # phone matching key = area code + last subscriber digits
+subscriber_digits = 8
+
+[paths]
+workspace = "workspace"         # leads/<slug>/dossier.json, leads/<slug>/outreach.md, sites/<slug>/ (relative to the repo)
+
+[limits]                        # safety caps: code reads them, no agent can change them
+max_rounds_per_day = 3          # hunter rounds per day
+max_leads_per_round = 10        # hard cap per round (the soft default is the leads_per_round param)
+max_builders = 2                # concurrent builds
+builder_timeout_min = 40        # one Claude Code run
+builder_max_attempts = 3        # a failing ticket is cancelled after this many runs
+builder_max_usd = ""            # cost cap per run ("" = none)
+builder_max_usd_day = ""        # daily builder cost cap; tickets wait in the queue when reached ("" = none)
+review_rounds = 3               # review -> fix -> review ... then stop
+lead_retention_days = 30        # untouched leads expire (squad purge)
+
+[adapters]                      # short name = bundled module; dotted path = your own module (docs/adapters.md)
+deploy = "vercel"
+review = "codex"
+notify = "telegram"
+leads = "cnpj"
+
+[vercel]
+scope = ""                      # team scope for preview deploys ("" = CLI default)
+
+[cnpj]
+month = "2026-09"               # competence month of the open CNPJ mirror (env CNPJ_MONTH overrides)
+cache_dir = ".cache/cnpj"       # per-state Parquet cache (~3 GB read on first build)
+
+[builder]
+site_skill = ""                 # Claude Code skill that creates a new site on a briefing ticket ("" = build from the dossier)
+sandbox = "auto"                # Claude Code OS sandbox: auto (on where supported), on (refuse without it), off
+allowed_domains = ["registry.npmjs.org", "*.npmjs.org", "registry.yarnpkg.com", "fonts.googleapis.com", "fonts.gstatic.com"]
+image_hosts = ["images.pexels.com"]   # save_photo only downloads from these hosts
+live_port = 3400                # dev server port for the optional Maestri live portal
+
+[security]
+env_passthrough = []            # extra env vars child processes may see (e.g. "ANTHROPIC_API_KEY" if Claude Code uses it)
+
+[bot]
+report_time = "08:30"           # daily report (HH:MM)
+hunter_time = "09:30"           # automatic hunter round (HH:MM), only when a target directive exists
+hunter_weekdays_only = true
+
+[agents]
+catalog = "examples/web-studio/catalog.md"   # what the sales/account agents may say about prices and plans
+replies = "examples/web-studio/replies.md"
+
+[guard]
+safe_reply = "Isso eu não consigo compartilhar. Posso te ajudar com o seu site: o que você precisa?"  # sent when a leak is blocked
+
+[hermes]
+home = ""                       # Hermes home ("" = $HERMES_HOME, else %LOCALAPPDATA%/hermes or ~/.hermes)
+bin = ""                        # hermes binary ("" = PATH)
+uv = ""                         # uv binary for the MCP server and guard plugin ("" = PATH)
+admin_ids = []                  # channel user ids allowed to run Hermes slash commands (empty = nobody)
+
+# Presets for `squad hermes switch-model <name>`, merged over the bundled anthropic and deepseek presets.
+# [hermes.providers.anthropic]
+# provider = "anthropic"
+# base_url = "https://api.anthropic.com"
+# model = "claude-haiku-5-5"
+# api_key_env = "ANTHROPIC_API_KEY"
+
+[sim]
+allowed_prices = []             # prices allowed in simulated replies besides every "R$ N" in the catalog
+single_page_prices = ["600", "900"]  # single-page price range the sales agent should quote
