@@ -34,6 +34,8 @@ def check_candidate(c: dict) -> None:
     (["--state", "SP", "--city", CITY, "--cnae", "86a", "--limit", "2"], "cnae digits only"),
     (["--state", "S1", "--city", CITY, "--cnae", "8630504"], "invalid state"),
     (["cnae"], "cnae without --query"),
+    (["--state", "SP", "--city", CITY, "--cnae", "9602501", "--days", "30", "--opened-before", "2000-01-01"],
+     "opened-before earlier than the window start"),
 ])
 def test_refusals(capsys, args, reason):
     assert run(capsys, *args)[0] != 0, f"should refuse: {reason}"

@@ -39,7 +39,9 @@ Done when: you know which niche and city combinations already ran, when, and whi
 
 ### 2. Choose the target
 
-Choose niche, city, state and window (`--days`, default 365; use 90 to 180 to catch newly opened companies). Follow
+Choose niche, city, state and window (`--days`, default 365; use 90 to 180 to catch newly opened companies, or
+`--days 3650 --opened-before <date two years ago>` to reach established businesses). Results come newest first and
+skip sole proprietors without a trade name (they cannot become a dossier). Follow
 the SOUL: reuse what worked, explore something new every 3 rounds, do not repeat city and niche within 30 days. If
 {{owner}} named a target in a directive, use theirs.
 
@@ -63,8 +65,11 @@ If the CRM refuses (daily cap, hunter paused), stop and tell {{owner}}. Do not r
 ### 4. Search candidates
 
 ```bash
-squad leads search --state <ST> --city "<city>" --cnae <c1,c2> --days <N> --limit <L>
+squad leads search --state <ST> --city "<city>" --cnae <c1,c2> --days <N> [--opened-before YYYY-MM-DD] --limit <L>
 ```
+
+Few or no candidates in a MEI-heavy niche? Widen to established businesses with `--opened-before` instead of
+repeating the same window.
 
 The first search in a new state builds a cache (a few minutes, reads ~3 GB). Say so before running it, then wait.
 The output is JSON with `candidates`. The `has_site` field comes as "unknown": step 5 resolves it.

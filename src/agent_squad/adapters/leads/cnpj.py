@@ -104,7 +104,10 @@ def ensure_cache(state: str) -> tuple[Path, Path]:
     return est, emp
 
 
-def candidates(state: str, city: str, cnaes: list[str], since: date, limit: int) -> list[dict]:
+def candidates(state: str, city: str, cnaes: list[str], since: date, limit: int, until: date | None = None,
+               named_only: bool = True) -> list[dict]:
+    """Newest first inside [since, until]. named_only skips sole proprietors without a trade name: their legal name
+    is the owner's personal name, so they cannot become a dossier (common in MEI-heavy niches)."""
     est, emp = ensure_cache(state)
     c = connect()
     r = c.execute(f"select codigo from read_parquet('{hf()}/resolve/main/municipios/municipios.parquet') "
@@ -116,10 +119,11 @@ def candidates(state: str, city: str, cnaes: list[str], since: date, limit: int)
             (select descricao from read_parquet('{hf()}/resolve/main/cnaes/cnaes.parquet') n
              where n.codigo = e.cnae_fiscal_principal) as cnae_desc
         from read_parquet('{est.as_posix()}') e left join read_parquet('{emp.as_posix()}') m using (cnpj_basico)
-        where e.municipio = ? and ({like}) and e.data_inicio_atividade >= ?
+        where e.municipio = ? and ({like}) and e.data_inicio_atividade between ? and ?
           and (e.telefone1 is not null or e.correio_eletronico is not null)
+          and (not ? or nullif(trim(e.nome_fantasia), '') is not null or coalesce(m.natureza_juridica, '') <> '2135')
         order by e.data_inicio_atividade desc limit ?""",
-        [r[0], since.strftime("%Y%m%d"), limit]).fetchall()
+        [r[0], since.strftime("%Y%m%d"), (until or date.today()).strftime("%Y%m%d"), named_only, limit]).fetchall()
     cols = [d[0] for d in c.description]
     return [dict(zip(cols, x)) for x in rows]
 
@@ -172,6 +176,8 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--cnae", help="CNAE codes (or prefixes), comma-separated")
     ap.add_argument("--days", type=int, default=365, help="opened in the last N days")
     ap.add_argument("--opened-since", help="YYYY-MM-DD (overrides --days)")
+    ap.add_argument("--opened-before", help="YYYY-MM-DD: only companies opened before this date (established ones)")
+    ap.add_argument("--any-name", action="store_true", help="include sole proprietors without a trade name")
     ap.add_argument("--limit", type=int, default=5)
     a = ap.parse_args(argv)
     if a.cmd == "cnae":
@@ -198,14 +204,18 @@ def main(argv: list[str] | None = None) -> None:
         sys.exit(f"--limit must be 1 to {cap} (leads per round cap)")
     today = date.today()
     since = date.fromisoformat(a.opened_since) if a.opened_since else today - timedelta(days=a.days)
+    until = date.fromisoformat(a.opened_before) if a.opened_before else None
+    if until and until <= since:
+        sys.exit("--opened-before must be after the window start (use a larger --days or --opened-since)")
     origin = f"cnpj-open-{month()}"
-    out = [summarize(r, a.city, today, origin) for r in candidates(state, a.city, cnaes, since, a.limit)]
+    out = [summarize(r, a.city, today, origin) for r in candidates(state, a.city, cnaes, since, a.limit, until, not a.any_name)]
     seen = {}
     for o in out:  # unique slug within the run
         seen[o["suggested_slug"]] = seen.get(o["suggested_slug"], 0) + 1
         if seen[o["suggested_slug"]] > 1:
             o["suggested_slug"] += f"-{seen[o['suggested_slug']]}"
     print(json.dumps({"params": {"state": state, "city": a.city, "cnae": cnaes, "opened_since": since.isoformat(),
+                                 "opened_before": until and until.isoformat(), "named_only": not a.any_name,
                                  "limit": a.limit},
                       "source": "cnpj", "cnpj_month": month(), "candidates": out}, ensure_ascii=False, indent=2))
 

@@ -88,7 +88,7 @@ def _yaml():
 def _read_env(p: Path) -> dict[str, str]:
     if not p.exists():
         return {}
-    return dict(l.split("=", 1) for l in p.read_text(encoding="utf-8").splitlines() if re.match(r"^[A-Z_0-9]+=", l))
+    return dict(ln.split("=", 1) for ln in p.read_text(encoding="utf-8").splitlines() if re.match(r"^[A-Z_0-9]+=", ln))
 
 
 def section(text: str, title: str) -> str:
@@ -114,10 +114,10 @@ def install(role: str, profile: str | None = None, env_extra: dict[str, str] | N
     squad_env = {"SQUAD_HOME": str(ROOT), "SQUAD_WORKSPACE": str(s.workspace)}
 
     env_p = dest / ".env"
-    lines = [l for l in (env_p.read_text(encoding="utf-8").splitlines() if env_p.exists() else [])
-             if not re.match(r"^(TELEGRAM_|WHATSAPP_|SQUAD_)", l)]
+    lines = [ln for ln in (env_p.read_text(encoding="utf-8").splitlines() if env_p.exists() else [])
+             if not re.match(r"^(TELEGRAM_|WHATSAPP_|SQUAD_)", ln)]
     if role in CUSTOMER_FACING:
-        lines = [l for l in lines if re.match(MODEL_KEY_RE, l)]
+        lines = [ln for ln in lines if re.match(MODEL_KEY_RE, ln)]
     env_p.write_text("\n".join(lines + [f"{k}={v}" for k, v in squad_env.items()]) + "\n", encoding="utf-8")
 
     cfg_p = dest / "config.yaml"
