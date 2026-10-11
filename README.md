@@ -99,7 +99,7 @@ Talk to the sales agent yourself: `uv run python -m sim.chat sales new`.
 - **Prompts**: `agents/<role>/` (rendered with `{{business}}`, `{{owner}}`, `{{language}}`, `{{workspace}}`).
 - **Catalog**: point `[agents] catalog` to your own file; `examples/web-studio/` shows the format.
 - **Integrations**: write an adapter ([`docs/adapters.md`](docs/adapters.md)).
-- **Maestri canvas**: optional skills `squad-init` and `squad-ops` in [`integrations/maestri`](integrations/maestri).
+- **Maestri canvas**: skills `squad-init` and `squad-ops` ship with the coordinator; see [`integrations/maestri`](integrations/maestri).
 
 ## What was verified, and what was not
 

@@ -1,6 +1,6 @@
 ---
 name: squad-ops
-description: Operates the squad as root: answers "how is it going?", answers the builder's questions, delegates to the team through the CRM and runs the hunter on demand. The ticket flow moves by itself (squad worker) and the reports go through the approvals bot. Use when the user says "how is the squad doing", "move the queue", "run the hunter", "squad-ops", or when a question from the builder arrives.
+description: Operates the squad as root: answers "how is it going?", delegates to the team through the CRM and runs the hunter on demand. The ticket flow moves by itself (squad worker) and the reports go through the approvals bot. Use when the user says "how is the squad doing", "move the queue", "run the hunter", "squad-ops".
 ---
 
 # Operate the squad (root)

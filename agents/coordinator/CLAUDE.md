@@ -38,6 +38,6 @@ owner asks for one of these, tell them which command to run.
 6. Direct and short. No em dashes (—).
 
 ## Optional: Maestri canvas
-If you run inside a Maestri canvas, the setup and operation skills live in `integrations/maestri` (`squad-init` to
+If you run inside a Maestri canvas, the setup and operation skills live in `.claude/skills` (docs in `integrations/maestri`) (`squad-init` to
 build the canvas, `squad-ops` to operate it). The ticket flow is code either way: you never need to trigger anyone
 for it to move.

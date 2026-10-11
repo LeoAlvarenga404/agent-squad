@@ -22,31 +22,26 @@ it cannot answer becomes a pending item in its report, which reaches you inside 
 ## Canvas
 | Terminal | Command | What it is |
 |---|---|---|
-| `root` | Claude Code in `agents/coordinator`, Maestro Mode | the coordinator; answers builder questions |
+| `root` | Claude Code in `agents/coordinator`, Maestro Mode | the coordinator: turns your requests into directives |
 | `builder` | `uv run squad worker` | pulls the queue (`builder_mode = worker`) |
 | `telegram` | `uv run squad bot` | approvals, news, daily report, hunter schedule |
 | `dashboard` | `uv run squad dashboard --watch 20` | CRM summary |
 | `claude`, `codex` | `uv run squad logs claude` / `codex` | read-only: builder and reviewer, live |
 | `hunter`, `sales`, `account` | `uv run squad logs <role>` | read-only: each Hermes profile, live |
 
-Plus a `live` portal connected to `builder`, and connections `builder` -> `root` (questions) and
-`builder` -> `claude` -> `codex` (drawing of the chain). No routines, no notes, no interactive agents. Never connect
+Plus a `live` portal connected to `builder` and a drawing of the chain `builder` -> `claude` -> `codex`. Nothing is
+connected to `root`. No routines, no notes, no interactive agents. Never connect
 anything that carries customer text (`sales`, `account`, a test `client`).
 
 ## Setup
-1. Copy the skills into the coordinator's Claude Code skills folder:
-   `agents/coordinator/.claude/skills/squad-init` and `.../squad-ops` (from `integrations/maestri/skills`).
-2. Allow the Maestri CLI for the coordinator and deny the destructive commands, in
-   `agents/coordinator/.claude/settings.json`:
-   ```json
-   "allow": ["Bash(maestri:*)"],
-   "deny": ["Bash(maestri floor land:*)", "Bash(maestri floor delete:*)", "Bash(maestri note delete:*)",
-            "Bash(maestri routine delete:*)", "Bash(maestri portal close:*)", "Bash(maestri dismiss:*)"]
-   ```
-3. In Maestri: a Claude Code terminal in `<repo>/agents/coordinator`, named `root`, with **Maestro Mode** on.
-4. In it: `/squad-init`. Then, in Telegram: `/target <niche and city>` and `/status`.
+The skills ship with the coordinator (`agents/coordinator/.claude/skills/`) and its settings already allow the
+Maestri CLI (destructive commands denied). Nothing to install.
+
+1. The squad itself works first: `.env`, `squad.toml`, `docker compose up -d`, `uv run pytest` (see the README).
+2. In Maestri: a Claude Code terminal in `<repo>/agents/coordinator`, named `root`, with **Maestro Mode** on.
+3. In it: `/squad-init`. Then, in Telegram: `/target <niche and city>` and `/status`.
 
 | Skill | Use |
 |---|---|
 | `squad-init` | builds (or checks, idempotently) the canvas above and sets `builder_mode = worker` |
-| `squad-ops` | day-to-day: "how is it going?", builder questions, delegation, hunter on demand |
+| `squad-ops` | day-to-day: "how is it going?", delegation, hunter on demand |

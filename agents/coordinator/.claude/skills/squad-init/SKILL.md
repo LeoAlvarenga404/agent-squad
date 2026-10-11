@@ -1,6 +1,6 @@
 ---
 name: squad-init
-description: Builds from scratch (or checks, without duplicating) the squad's Maestri canvas from the CLI: the builder worker, the approvals bot, the dashboard, the read-only agent views, the live portal and the connection for builder questions. Use when the user says "set up the squad in Maestri", "build the canvas", "squad-init" or asks to create the squad's canvas.
+description: Builds from scratch (or checks, without duplicating) the squad's Maestri canvas from the CLI: the builder worker, the approvals bot, the dashboard, the read-only agent views and the live portal. Use when the user says "set up the squad in Maestri", "build the canvas", "squad-init" or asks to create the squad's canvas.
 ---
 
 # Set up the squad's Maestri canvas (CLI)
@@ -53,15 +53,14 @@ maestri connect "live" "builder"
 The worker starts the dev server of the site under construction (`[builder] live_port`, default 3400) and points
 `live` at it; at the end, at the preview.
 
-## 3. Connection for questions
+## 3. Drawing of the chain
 ```
-maestri connect "builder" "root"
 maestri connect "builder" "claude"
 maestri connect "claude" "codex"
 ```
-Each ticket's Claude Code runs inside the `builder` terminal. It never messages other terminals: open questions come
-back as pending items in the `send_preview` approval. `builder` -> `claude` -> `codex` only draws the chain (worker,
-build, review). **Never** connect `client`, `sales` or `account` to anything: they carry customer text.
+Only a drawing of the flow (worker, build, review). Each ticket's Claude Code never messages other terminals: open
+questions come back as pending items in the `send_preview` approval. **Never** connect anything to `root`, and never
+connect `client`, `sales` or `account` to anything: they carry customer text.
 
 ## 4. Builder mode
 `crm` MCP tool: `set_param("builder_mode", "worker")` (the worker pulls the queue). Confirm it in the result.

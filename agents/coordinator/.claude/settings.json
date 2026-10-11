@@ -11,7 +11,8 @@
       "mcp__crm__list_deals",
       "mcp__crm__get_deal",
       "mcp__crm__list_campaigns",
-      "Bash(hermes -p hunter chat -Q:*)"
+      "Bash(hermes -p hunter chat -Q:*)",
+      "Bash(maestri:*)"
     ],
     "deny": [
       "Bash(squad:*)",
@@ -22,7 +23,13 @@
       "Write",
       "Bash(git:*)",
       "Bash(vercel:*)",
-      "Read(**/.env*)"
+      "Read(**/.env*)",
+      "Bash(maestri floor land:*)",
+      "Bash(maestri floor delete:*)",
+      "Bash(maestri note delete:*)",
+      "Bash(maestri routine delete:*)",
+      "Bash(maestri portal close:*)",
+      "Bash(maestri dismiss:*)"
     ]
   }
 }
